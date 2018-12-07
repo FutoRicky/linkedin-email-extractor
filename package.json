@@ -1,0 +1,16 @@
+{
+  "name": "linkedin-messenger",
+  "version": "1.0.0",
+  "description": "LinkedIn messenger automatization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ricardo Mercado <hello@ricardoamercado.com>",
+  "license": "ISC",
+  "dependencies": {
+    "nightmare": "^3.0.1",
+    "prompt": "^1.0.0",
+    "vo": "^4.0.2"
+  }
+}
