@@ -1,6 +1,5 @@
 const fs = require('fs');
 const csv = require('fast-csv');
-// require('.assets/js/jquery.csv.min.js');w
 const prompt = require('prompt')
 const Nightmare = require('nightmare')
 const nightmare = Nightmare({ 
