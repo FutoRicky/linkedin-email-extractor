@@ -9,8 +9,10 @@
   "author": "Ricardo Mercado <hello@ricardoamercado.com>",
   "license": "ISC",
   "dependencies": {
+    "fast-csv": "^2.4.1",
+    "jquery": "^3.3.1",
+    "jquery-csv": "^0.8.9",
     "nightmare": "^3.0.1",
-    "prompt": "^1.0.0",
-    "vo": "^4.0.2"
+    "prompt": "^1.0.0"
   }
 }
