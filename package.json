@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "fast-csv": "^2.4.1",
+    "moment": "^2.23.0",
     "nightmare": "^3.0.1",
     "prompt": "^1.0.0"
   }
