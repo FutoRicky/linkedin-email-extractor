@@ -8,16 +8,19 @@ let nightmare = Nightmare({
 
 let connections = [];
 
-var stream = fs.createReadStream("connections.csv");
+// Get connection names from connections.csv
+let stream = fs.createReadStream("connections.csv");
 csv
  .fromStream(stream, {headers : true})
  .on("data", function(data){
      connections.push(`${data['First Name']} ${data['Last Name']}`);
  })
  .on("end", function(){
+    //  After connection names are setup, start email extraction process
     start();
  });
 
+// Setup prompt attributes
 let prompt_attrs = [
   { 
     name: 'email', 
@@ -42,11 +45,16 @@ let prompt_attrs = [
   }
 ]
 
+// Define variables
 let email, password, interval, limit;
 let emails = [];
 let index = 0;
 let intervalSet = false;
 
+// This function starts the process by asking user for LinkedIn credentials, as well config options
+// - email & password are used to log in to linkedin
+// - interval establishes how often will emails be extracted
+// - limit is the amount of emails to extract on every interval
 function start() {
   prompt.start()
   
@@ -60,9 +68,11 @@ function start() {
   getEmails(index);
 }
 
-
+// Emails are stored in this array to be written to email.txt later.
 let result = []
 
+// Initial email extraction procedure
+// Logs in to linked in and runs the getEmail async function to actually extract the emails
 async function getEmails(index) {
   try {
     await nightmare
@@ -79,9 +89,12 @@ async function getEmails(index) {
   }
 }
 
+// Actual email extraction procedure
+// Crawler looks for seach input box, writes connection name, clicks on first result, and copies connection's email
 async function getEmail(index, count) {
   count = count || 0;
 
+  // Condition is here to make sure no more than the limit of emails is extracted on each interval
   if (count < limit) {
     try {
       await nightmare
@@ -99,6 +112,7 @@ async function getEmail(index, count) {
 
       result.push(
         await nightmare
+        // here we get the email from the connections linkedin page.
         .evaluate(() => { return document.querySelector('.pv-contact-info__contact-type.ci-email a.pv-contact-info__contact-link').href.replace('mailto:', ''); })
       )
 
@@ -106,6 +120,8 @@ async function getEmail(index, count) {
       console.error(e);
     }
   } else {
+    // If interval email limit is reached, end the crawler session and add emails to emails.txt
+    // Then start the interval if it has not been set already
     await nightmare
     .end();
     addEmailsToFile(result)
@@ -113,8 +129,11 @@ async function getEmail(index, count) {
     if (!intervalSet) {
       intervalSet = true;
       setInterval(function() {
-        if (result.length >= 4) {
-        // if (result.length >= connections.length) {
+
+        // If result.length is equal to connections.length then email extraction is completed.
+        // Let user know the process has ended.
+        // If process has not ended, continue with procedure interval.
+        if (result.length >= connections.length) {
           console.log("Email extraction complete. You can end this program pressing Ctrl+C");
         } else {
           nightmare = Nightmare({ 
@@ -141,6 +160,7 @@ async function getEmail(index, count) {
   }
 }
 
+// Function to add emails to email.txt file.
 function addEmailsToFile(data) {
   fs.writeFile('emails.txt', data, function(err) { 
     if (err) throw err;
