@@ -9,7 +9,7 @@ let nightmare = Nightmare({
 let connections = [];
 
 // Get connection names from connections.csv
-let stream = fs.createReadStream("connections.csv");
+let stream = fs.createReadStream("Connections.csv");
 csv
  .fromStream(stream, {headers : true})
  .on("data", function(data){
