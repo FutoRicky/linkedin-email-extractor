@@ -1,5 +1,5 @@
 # linkedin-email-extractor
-### A simple node script to extract you linkedin connection emails
+### A simple node script to extract your linkedin connection emails
 
 ## Problem
 LinkedIn allows you to export all of your connections' info into a csv, except for their emails. 
