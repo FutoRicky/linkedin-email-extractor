@@ -1,7 +1,7 @@
 {
-  "name": "linkedin-messenger",
+  "name": "linkedin-email-extractor",
   "version": "1.0.0",
-  "description": "LinkedIn messenger automatization",
+  "description": "A node web scraper to extract your linkedin connection emails",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "fast-csv": "^2.4.1",
-    "moment": "^2.23.0",
     "nightmare": "^3.0.1",
     "prompt": "^1.0.0"
   }
