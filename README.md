@@ -17,4 +17,4 @@ Additionally their API stopped allowing the extraction of emails around 2013-201
 - Run `node --harmony index.js`
 - Enter LinkedIn Credentials when prompted
 - Wait for email extraction process to finish
-- An `email.txt` file will be generated with all off the emails
+- An `email.txt` file will be generated with all the emails
