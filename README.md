@@ -2,7 +2,7 @@
 ### A node web scraper to extract your linkedin connection emails
 
 ## Important Note
-Scraping data off of Linked in is against their [User Agreement](https://www.linkedin.com/legal/user-agreement). This is purely intended for educational purposes.
+Scraping data off of LinkedIn is against their [User Agreement](https://www.linkedin.com/legal/user-agreement). This is purely intended for educational purposes.
 
 ## Why?
 LinkedIn allows you to export all of your connections' info into a csv, except for their emails. 
