@@ -52,7 +52,7 @@ function start() {
   prompt.get(prompt_attrs, (err, result) => {
     email = result.email
     password = result.password
-    showNightmare = result.showNightmare === "yes" ? true : false
+    showNightmare = result.showNightmare === "yes"
     nightmare = Nightmare({
       show: showNightmare,
       waitTimeout: 20000
