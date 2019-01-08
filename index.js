@@ -32,6 +32,11 @@ let prompt_attrs = [
     required: true, 
     message: "LinkedIn password" 
   },
+  { 
+    name: 'searchInterval', 
+    default: "2000",
+    message: "Wait interval between each connection search (in ms)" 
+  },
   {
     name: 'showNightmare',
     default: "no",
@@ -40,7 +45,7 @@ let prompt_attrs = [
 ]
 
 // Define variables
-let email, password, showNightmare;
+let email, password, showNightmare, searchInterval;
 let emails = [];
 let index = 0;
 
@@ -53,6 +58,7 @@ function start() {
     email = result.email
     password = result.password
     showNightmare = result.showNightmare === "yes"
+    searchInterval = parseInt(result.searchInterval)
     nightmare = Nightmare({
       show: showNightmare,
       waitTimeout: 20000
@@ -97,6 +103,7 @@ async function getEmail(index, count) {
       .wait('.js-mn-origami-rail-card__connection-count')
       .click('.js-mn-origami-rail-card__connection-count')
       .wait('.mn-connections__search-input')
+      .wait(searchInterval)
       .insert('.mn-connections__search-input', connections[index])
       .wait(2000)
       .click('.mn-connection-card__link')
