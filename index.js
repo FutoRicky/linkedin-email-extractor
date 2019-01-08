@@ -178,6 +178,8 @@ function extractedDataProcedure() {
     extractedConnections = extractedData.extracted_data.map((data) => {
       return data.name;
     })
+  } else {
+    fs.mkdirSync('stored_data');
   }
 
   // Filter connections that where already extracted
