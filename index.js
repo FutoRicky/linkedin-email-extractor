@@ -4,6 +4,9 @@ const prompt = require('prompt');
 const Nightmare = require('nightmare');
 
 let connections = [];
+let extractedData = {
+  extracted_data: []
+};
 let nightmare;
 
 // Get connection names from connections.csv
@@ -15,9 +18,11 @@ csv
  })
  .on("end", function(){
     //  After connection names are setup, start email extraction process
-    console.log("Total connections: ", connections.length)
+    extractedDataProcedure();
+    console.log("Total connections to extract: ", connections.length)
     start();
- });
+  });
+  
 
 // Setup prompt attributes
 let prompt_attrs = [
@@ -52,19 +57,23 @@ let index = 0;
 // This function starts the process by asking user for LinkedIn credentials, as well config options
 // - email & password are used to log in to linkedin
 function start() {
-  prompt.start()
-  
-  prompt.get(prompt_attrs, (err, result) => {
-    email = result.email
-    password = result.password
-    showNightmare = result.showNightmare === "yes"
-    searchInterval = parseInt(result.searchInterval)
-    nightmare = Nightmare({
-      show: showNightmare,
-      waitTimeout: 20000
+  if (connections.length <= 0) {
+    console.log("No connections to extract or they have all been extracted already.")
+  } else {
+    prompt.start()
+    
+    prompt.get(prompt_attrs, (err, result) => {
+      email = result.email
+      password = result.password
+      showNightmare = result.showNightmare === "yes"
+      searchInterval = parseInt(result.searchInterval)
+      nightmare = Nightmare({
+        show: showNightmare,
+        waitTimeout: 20000
+      })
+      getEmails(index);
     })
-    getEmails(index);
-  })
+  }
 }
 
 
@@ -158,11 +167,58 @@ async function getEmail(index, count) {
   }
 }
 
+function extractedDataProcedure() {
+  let extractedConnections;
+
+  // Verify if there is past extracted_data
+  if (fs.existsSync('stored_data/extracted_data.json')) {
+
+    // get extracted data and assign to extractedData variable
+    extractedData = JSON.parse(fs.readFileSync('stored_data/extracted_data.json', 'utf8'));
+    extractedConnections = extractedData.extracted_data.map((data) => {
+      return data.name;
+    })
+  }
+
+  // Filter connections that where already extracted
+  if (extractedConnections) {
+    connections = connections.filter((name) => {
+      return !extractedConnections.includes(name)
+    })
+  }
+
+}
+
 // Function to add emails to email.txt file.
 function addEmailsToFile(data) {
-  fs.writeFile('emails.txt', data, function(err) { 
+
+  setExtractedData(data);
+
+  if (fs.existsSync('stored_data/emails.txt')) {
+    fs.appendFile('stored_data/emails.txt', `\r\n\r\n${data}`, function(err) { 
+      if (err) throw err;
+      // if no error
+      console.log(`${result.length} email(s) extracted.`)
+    });
+  } else {
+    fs.writeFile('stored_data/emails.txt', data, function(err) { 
+      if (err) throw err;
+      // if no error
+      console.log(`${result.length} email(s) extracted.`)
+    });
+  }
+}
+
+function setExtractedData(data) {
+  data.forEach((email, index) => {
+    let extractedConnection = {"name":connections[index],"email": email}
+    if (email && !extractedData.extracted_data.includes(extractedConnection)) {
+      extractedData.extracted_data.push(extractedConnection)
+    }
+  })
+
+  fs.writeFile('stored_data/extracted_data.json', JSON.stringify(extractedData), function(err) { 
     if (err) throw err;
-    // if no error
-    console.log(`${result.length} email(s) extracted.`)
   });
+
 }
