@@ -109,8 +109,10 @@ async function getEmail(index, count) {
       await nightmare
       .wait('.nav-item--mynetwork')
       .click('.nav-item--mynetwork a')
-      .wait('.js-mn-origami-rail-card__connection-count')
-      .click('.js-mn-origami-rail-card__connection-count')
+      // .wait('.js-mn-origami-rail-card__connection-count')
+      .wait('.mn-community-summary__link')
+      // .click('.js-mn-origami-rail-card__connection-count')
+      .click('.mn-community-summary__link')
       .wait('.mn-connections__search-input')
       .wait(searchInterval)
       .insert('.mn-connections__search-input', connections[index])
@@ -178,7 +180,7 @@ function extractedDataProcedure() {
     extractedConnections = extractedData.extracted_data.map((data) => {
       return data.name;
     })
-  } else {
+  } else if (!fs.existsSync('stored_data')) {
     fs.mkdirSync('stored_data');
   }
 
