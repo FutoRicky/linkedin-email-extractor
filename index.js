@@ -39,7 +39,7 @@ let prompt_attrs = [
   },
   { 
     name: 'searchInterval', 
-    default: "2000",
+    default: "1000",
     message: "Wait interval between each connection search (in ms)" 
   },
   {
@@ -79,6 +79,7 @@ function start() {
 
 // Emails are stored in this array to be written to email.txt later.
 let result = []
+let phones = []
 
 // Initial email extraction procedure
 // Logs in to linked in and runs the getEmail async function to actually extract the emails
@@ -91,6 +92,7 @@ async function getEmails(index) {
     .click('#login-submit')
     .wait('.nav-item--mynetwork')
     .run(() => {
+	console.log(6);
       getEmail(index);
     })
   } catch(e) {
@@ -103,20 +105,26 @@ async function getEmails(index) {
 async function getEmail(index, count) {
   count = count || 0;
 
-  // Condition is here to make sure no more than the limit of emails is extracted on each interval
+console.log("phones");
+console.log(phones);
+console.log("result");
+console.log(result);
+
+  // Condition is here to make sure no more than the limit of mails is extracted on each interval
   if (count < connections.length) {
     try {
+	console.log(connections[index]);
       await nightmare
       .wait('.nav-item--mynetwork')
       .click('.nav-item--mynetwork a')
-      // .wait('.js-mn-origami-rail-card__connection-count')
-      .wait('.mn-community-summary__link')
-      // .click('.js-mn-origami-rail-card__connection-count')
-      .click('.mn-community-summary__link')
+      .wait('.js-mn-origami-rail-card__connection-count')
+      // .wait('.mn-community-summary__link')
+      .click('.js-mn-origami-rail-card__connection-count')
+      // .click('.mn-community-summary__link')
       .wait('.mn-connections__search-input')
       .wait(searchInterval)
       .insert('.mn-connections__search-input', connections[index])
-      .wait(2000)
+      .wait(1000)
       .click('.mn-connection-card__link')
       .wait('.pv-top-card-v2-section__link--contact-info')
       .click('.pv-top-card-v2-section__link--contact-info')
@@ -128,21 +136,40 @@ async function getEmail(index, count) {
         // here we get the email from the connections linkedin page.
         .evaluate(() => {
           try {
-            return document.querySelector('.pv-contact-info__contact-type.ci-email a.pv-contact-info__contact-link').href.replace('mailto:', ''); 
+            let me = document.querySelector('.pv-contact-info__contact-type.ci-email a.pv-contact-info__contact-link').href.replace('mailto:', ''); 
+	return me;
           } catch(e) {
             console.error("An email could not be extracted.")
+		return " ";
+          }
+        })
+      )
+
+      phones.push(
+        await nightmare
+
+        // here we get the phone from the connections linkedin page.
+        .evaluate(() => {
+          try {
+            return document.querySelector('.pv-contact-info__contact-type.ci-phone ul li span').innerHTML; 
+          } catch(e) {
+            console.error("A phone could not be extracted.")
+		return e;
           }
         })
       )
 
     } catch(e) {
-      console.error("Unable to extract email from connection # ", count);
+      console.error("Unable to extract email or phone from connection # ", count);
+	result.push(" ");
+	phones.push(" ");
     }
   } else {
     // When all emails have been extracted, end nightmare crawler and add emails to email.txt
     await nightmare
     .end();
     addEmailsToFile(result)
+	addPhonesToFile(phones);
     return
   }
   try {
@@ -161,13 +188,17 @@ async function getEmail(index, count) {
         getEmail(index + 1, count)
       })
     
-    emails.push(result);
 
   } catch(e) {
     console.error('An email could not be extracted.');
     return undefined;
   }
 }
+
+
+
+
+/* Extract data from CSV (json file is a cache) */
 
 function extractedDataProcedure() {
   let extractedConnections;
@@ -193,7 +224,13 @@ function extractedDataProcedure() {
 
 }
 
-// Function to add emails to email.txt file.
+
+
+
+
+
+
+// Function to add emails to emails.txt file.
 function addEmailsToFile(data) {
 
   setExtractedData(data);
@@ -213,9 +250,29 @@ function addEmailsToFile(data) {
   }
 }
 
-function setExtractedData(data) {
+// Function to add phones to phones.txt file.
+function addPhonesToFile(data) {
+
+  setExtractedData(data,"phone");
+
+  if (fs.existsSync('stored_data/phones.txt')) {
+    fs.appendFile('stored_data/phones.txt', `\r\n\r\n${data}`, function(err) { 
+      if (err) throw err;
+      // if no error
+      console.log(`${result.length} phone(s) extracted.`)
+    });
+  } else {
+    fs.writeFile('stored_data/phones.txt', data, function(err) { 
+      if (err) throw err;
+      // if no error
+      console.log(`${result.length} phone(s) extracted.`)
+    });
+  }
+}
+
+function setExtractedData(data,type="email") {
   data.forEach((email, index) => {
-    let extractedConnection = {"name":connections[index],"email": email}
+    let extractedConnection = {"name":connections[index],type: email}
     if (email && !extractedData.extracted_data.includes(extractedConnection)) {
       extractedData.extracted_data.push(extractedConnection)
     }
