@@ -92,7 +92,6 @@ async function getEmails(index) {
     .click('#login-submit')
     .wait('.nav-item--mynetwork')
     .run(() => {
-	console.log(6);
       getEmail(index);
     })
   } catch(e) {
@@ -105,15 +104,11 @@ async function getEmails(index) {
 async function getEmail(index, count) {
   count = count || 0;
 
-console.log("phones");
-console.log(phones);
-console.log("result");
-console.log(result);
 
   // Condition is here to make sure no more than the limit of mails is extracted on each interval
   if (count < connections.length) {
     try {
-	console.log(connections[index]);
+	console.log("Processing #" + index + ": "+ connections[index]);
       await nightmare
       .wait('.nav-item--mynetwork')
       .click('.nav-item--mynetwork a')
@@ -124,6 +119,7 @@ console.log(result);
       .wait('.mn-connections__search-input')
       .wait(searchInterval)
       .insert('.mn-connections__search-input', connections[index])
+//      .wait(2000)
       .wait(1000)
       .click('.mn-connection-card__link')
       .wait('.pv-top-card-v2-section__link--contact-info')
@@ -154,7 +150,7 @@ console.log(result);
             return document.querySelector('.pv-contact-info__contact-type.ci-phone ul li span').innerHTML; 
           } catch(e) {
             console.error("A phone could not be extracted.")
-		return e;
+		return " ";
           }
         })
       )
