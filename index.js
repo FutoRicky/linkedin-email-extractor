@@ -9,7 +9,8 @@ let extractedData = {
 };
 let nightmare;
 
-let max_extracts_by_session = 3;
+// 30 extracts by session worked fine for exporting 3000 contacts' emails & phones
+let max_extracts_by_session = 30;
 let subloop_count = 0;
 
 // Get connection names from connections.csv
@@ -94,9 +95,16 @@ let sub_phones = []
 
 // Initial email extraction procedure
 // Logs in to linked in and runs the getEmail async function to actually extract the emails
-async function getEmails(index,count) {
+async function getEmails(index,count,reset=false) {
 	sub_result = []
 	sub_phones = []
+	if(reset){
+		await nightmare.end()
+		nightmare = Nightmare({
+			show: showNightmare,
+			waitTimeout: 20000
+		})
+	}
   try {
    await nightmare
     .goto('https://linkedin.com')
@@ -216,7 +224,7 @@ async function getEmail(index, count) {
 		if(getUsersPhone)
 			sub_addPhonesToFile(sub_phones)
 		subloop_count += 1;
-		getEmails(index + 1, count);
+		getEmails(index + 1, count, true);
 	}else{
 	        getEmail(index + 1, count)
 	}
