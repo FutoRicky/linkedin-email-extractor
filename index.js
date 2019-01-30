@@ -26,6 +26,11 @@ csv
 
 // Setup prompt attributes
 let prompt_attrs = [
+  {
+    name: 'version',
+    default: 'new',
+    message: "What UI Version do you have? (old/new)"
+  },
   { 
     name: 'email', 
     required: true, 
@@ -50,7 +55,7 @@ let prompt_attrs = [
 ]
 
 // Define variables
-let email, password, showNightmare, searchInterval;
+let email, password, version, showNightmare, searchInterval;
 let emails = [];
 let index = 0;
 
@@ -65,6 +70,7 @@ function start() {
     prompt.get(prompt_attrs, (err, result) => {
       email = result.email
       password = result.password
+      version = result.version
       showNightmare = result.showNightmare === "yes"
       searchInterval = parseInt(result.searchInterval)
       nightmare = Nightmare({
@@ -109,10 +115,8 @@ async function getEmail(index, count) {
       await nightmare
       .wait('.nav-item--mynetwork')
       .click('.nav-item--mynetwork a')
-      // .wait('.js-mn-origami-rail-card__connection-count')
-      .wait('.mn-community-summary__link')
-      // .click('.js-mn-origami-rail-card__connection-count')
-      .click('.mn-community-summary__link')
+      .wait(`${version ? '.mn-community-summary__link' : '.js-mn-origami-rail-card__connection-count'}`)
+      .click(`${version ? '.mn-community-summary__link' : '.js-mn-origami-rail-card__connection-count'}`)
       .wait('.mn-connections__search-input')
       .wait(searchInterval)
       .insert('.mn-connections__search-input', connections[index])

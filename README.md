@@ -23,3 +23,12 @@ Additionally their API stopped allowing the extraction of emails around 2013-201
 - Enter LinkedIn Credentials when prompted
 - Wait for email extraction process to finish
 - An `email.txt` file will be generated with all the emails inside the `stored_data` folder.
+
+## LinkedIn UI Versions
+LinkedIn recently updated their UI and it affected the scraper logic. Some people already have the updated UI but some don't, so when you start the script you will be prompted to choose what version do you have. To know what version you have, go into the `network` section and look at the left side panel.
+
+If your panel looks like this, then you are still on the `old` version:
+[![Screen-Shot-2019-01-30-at-4-12-12-PM.png](https://i.postimg.cc/7YPkPvZG/Screen-Shot-2019-01-30-at-4-12-12-PM.png)](https://postimg.cc/LhW7vbf2)
+
+If your panel looks like this, then you are one the `new` version:
+[![Screen-Shot-2019-01-30-at-4-14-34-PM.png](https://i.postimg.cc/cHJR442k/Screen-Shot-2019-01-30-at-4-14-34-PM.png)](https://postimg.cc/gwfXgdY3)
