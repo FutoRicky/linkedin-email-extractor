@@ -34,3 +34,7 @@ If your panel looks like this, then you are still on the `old` version:
 If your panel looks like this, then you are one the `new` version:
 
 [![Screen-Shot-2019-01-30-at-4-14-34-PM.png](https://i.postimg.cc/rpsCCNNF/Screen-Shot-2019-01-30-at-4-14-34-PM.png)](https://postimg.cc/XZMCnFPT)
+
+## Issues extracting? Read This
+
+If linkedin updates their page and changes the class of an element used in the script it will stop working. You can check out the source code and verify if any class has changed on linkedin and update the script to make it work again. I can't be constantly checking linkedin to see if they have changed something that breaks the script.
