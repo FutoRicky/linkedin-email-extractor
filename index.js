@@ -26,11 +26,6 @@ csv
 
 // Setup prompt attributes
 let prompt_attrs = [
-  {
-    name: 'version',
-    default: 'new',
-    message: "What UI Version do you have? (old/new)"
-  },
   { 
     name: 'email', 
     required: true, 
@@ -55,7 +50,7 @@ let prompt_attrs = [
 ]
 
 // Define variables
-let email, password, version, showNightmare, searchInterval;
+let email, password, showNightmare, searchInterval;
 let emails = [];
 let index = 0;
 
@@ -70,7 +65,6 @@ function start() {
     prompt.get(prompt_attrs, (err, result) => {
       email = result.email
       password = result.password
-      version = result.version
       showNightmare = result.showNightmare === "yes"
       searchInterval = parseInt(result.searchInterval)
       nightmare = Nightmare({
@@ -91,10 +85,10 @@ let result = []
 async function getEmails(index) {
   try {
     await nightmare
-    .goto('https://linkedin.com')
-    .insert('#login-email', email)
-    .insert('#login-password', password)
-    .click('#login-submit')
+    .goto('https://www.linkedin.com/login')
+    .insert('#username', email)
+    .insert('#password', password)
+    .click('.btn__primary--large.from__button--floating')
     .wait('.nav-item--mynetwork')
     .run(() => {
       getEmail(index);
@@ -122,9 +116,9 @@ async function getEmail(index, count) {
       .insert('.mn-connections__search-input', connections[index])
       .wait(2000)
       .click('.mn-connection-card__link')
-      .wait('.pv-top-card-v2-section__link--contact-info')
-      .click('.pv-top-card-v2-section__link--contact-info')
-      .wait('.pv-contact-info.artdeco-container-card')
+      .wait('[data-control-name=contact_see_more]')
+      .click('[data-control-name=contact_see_more]')
+      .wait('.pv-contact-info')
 
       result.push(
         await nightmare
