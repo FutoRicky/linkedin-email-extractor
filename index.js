@@ -109,8 +109,8 @@ async function getEmail(index, count) {
       await nightmare
       .wait('.nav-item--mynetwork')
       .click('.nav-item--mynetwork a')
-      .wait(`${version ? '.mn-community-summary__link' : '.js-mn-origami-rail-card__connection-count'}`)
-      .click(`${version ? '.mn-community-summary__link' : '.js-mn-origami-rail-card__connection-count'}`)
+      .wait('.mn-community-summary__link')
+      .click('.mn-community-summary__link')
       .wait('.mn-connections__search-input')
       .wait(searchInterval)
       .insert('.mn-connections__search-input', connections[index])
