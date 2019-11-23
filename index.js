@@ -2,6 +2,8 @@ const fs = require('fs');
 const csv = require('fast-csv');
 const prompt = require('prompt');
 const Nightmare = require('nightmare');
+const ora = require('ora');
+const spinner = ora('Getting data, this may take a while depending on the amount of connections')
 
 let connections = [];
 let extractedData = {
@@ -61,7 +63,6 @@ function start() {
     console.log("No connections to extract or they have all been extracted already.")
   } else {
     prompt.start()
-    
     prompt.get(prompt_attrs, (err, result) => {
       email = result.email
       password = result.password
@@ -71,6 +72,7 @@ function start() {
         show: showNightmare,
         waitTimeout: 20000
       })
+      spinner.start()
       getEmails(index);
     })
   }
@@ -94,7 +96,9 @@ async function getEmails(index) {
       getEmail(index);
     })
   } catch(e) {
-    console.error("An error occured while attempting to login to linkedin.")
+    spinner.fail("An error occured while attempting to login to linkedin.")
+    spinner.stop()
+    // console.error("An error occured while attempting to login to linkedin.")
   }
 }
 
@@ -128,13 +132,18 @@ async function getEmail(index, count) {
           try {
             return document.querySelector('.pv-contact-info__contact-type.ci-email a.pv-contact-info__contact-link').href.replace('mailto:', ''); 
           } catch(e) {
-            console.error("An email could not be extracted.")
+            spinner.fail("An email could not be extracted.")
+            // spinner.stop()
+            // console.error("An email could not be extracted.")
           }
         })
       )
 
     } catch(e) {
-      console.error("Unable to extract email from connection # ", count);
+      // console.error("Unable to extract email from connection # ", count + 1);
+      connections.splice(index, 1)
+      index--
+      count--
     }
   } else {
     // When all emails have been extracted, end nightmare crawler and add emails to email.txt
@@ -143,26 +152,27 @@ async function getEmail(index, count) {
     addEmailsToFile(result)
     return
   }
+
   try {
     const result = await nightmare
       .evaluate(() => {
         try {
           return document.querySelector('.pv-contact-info__contact-type.ci-email a.pv-contact-info__contact-link').href.replace('mailto:', ''); 
         } catch(e) {
-          console.log("An email could not be extracted.");
+          // console.log("An email could not be extracted.");
           return undefined
         }
       })
       .run((result) => {
         count++;
-        console.log("#", count)
+        // console.log("#", count)
         getEmail(index + 1, count)
       })
     
     emails.push(result);
 
   } catch(e) {
-    console.error('An email could not be extracted.');
+    // console.error('An email could not be extracted.');
     return undefined;
   }
 }
@@ -200,13 +210,16 @@ function addEmailsToFile(data) {
     fs.appendFile('stored_data/emails.txt', `\r\n\r\n${data}`, function(err) { 
       if (err) throw err;
       // if no error
-      console.log(`${result.length} email(s) extracted.`)
+      spinner.succeed(`${result.length} email(s) extracted.`)
+      spinner.stop()
     });
   } else {
     fs.writeFile('stored_data/emails.txt', data, function(err) { 
       if (err) throw err;
       // if no error
-      console.log(`${result.length} email(s) extracted.`)
+      spinner.succeed(`${result.length} email(s) extracted.`)
+      spinner.stop()
+      // console.log(`${result.length} email(s) extracted.`)
     });
   }
 }

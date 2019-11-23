@@ -12,6 +12,7 @@
   "dependencies": {
     "fast-csv": "^2.4.1",
     "nightmare": "^3.0.1",
+    "ora": "^4.0.3",
     "prompt": "^1.0.0"
   }
 }
