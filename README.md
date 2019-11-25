@@ -1,6 +1,6 @@
 # linkedin-email-extractor
 ### A node web scraper to extract your linkedin connection emails
-*Currently not being maintained, but open to Pull Requests.*
+*Currently not being actively maintained, but open to Pull Requests.*
 
 ## Important Note
 Scraping data off of LinkedIn is against their [User Agreement](https://www.linkedin.com/legal/user-agreement). This is purely intended for educational purposes.
