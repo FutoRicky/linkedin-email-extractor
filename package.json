@@ -10,7 +10,7 @@
   "author": "Ricardo Mercado <hello@ricardoamercado.com>",
   "license": "ISC",
   "dependencies": {
-    "fast-csv": "^2.4.1",
+    "fast-csv": "^4.3.6",
     "nightmare": "^3.0.1",
     "ora": "^4.0.3",
     "prompt": "^1.0.0"
